@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:Wallet/models.dart';
+import 'package:Wallet/dialogs.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,15 +34,27 @@ class MyList extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        appBar: AppBar(
-          title: Text("My Wallet"),
-        ),
-        body: ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: records.length,
-            itemBuilder: (BuildContext context, int index) {
-              return _buildItemsForListView(context, index);
-            }));
+      appBar: AppBar(
+        title: Text("My Wallet"),
+      ),
+      body: ListView.builder(
+          padding: const EdgeInsets.all(8),
+          itemCount: records.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _buildItemsForListView(context, index);
+          }),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          backgroundColor: Colors.blue,
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return NewRecordDialog();
+              },
+            );
+          }),
+    );
   }
 
   Container _buildItemsForListView(BuildContext context, int index) {
@@ -58,7 +71,7 @@ class MyList extends StatelessWidget {
             ],
             borderRadius: BorderRadius.all(Radius.circular(8.0))),
         margin: EdgeInsets.all(10.0),
-        padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
+        padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -75,27 +88,37 @@ class MyList extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Container(
-                  width: 100.0,
-                  height: 50.0,
-                  color: Colors.white,
-                  child: Text("credit : " + records[index].credit.toString()),
-                ),
-                Container(
-                  width: 100.0,
-                  height: 50.0,
-                  color: Colors.white,
-                  child: Text("credit : " + records[index].credit.toString()),
-                ),
-                Container(
-                  width: 100.0,
-                  height: 50.0,
-                  color: Colors.white,
-                  child: Text("credit : " + records[index].credit.toString()),
-                ),
+                textBox("credit : \n" + records[index].credit.toString()),
+                textBox("debit : \n" + records[index].debit.toString()),
+                textBox("balance : \n" + records[index].balance.toString()),
               ],
             )
           ],
         ));
+  }
+
+  Widget textBox(String text) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 2.0,
+              spreadRadius: 0.0,
+              offset: Offset(2.0, 2.0), // shadow direction: bottom right
+            )
+          ],
+          borderRadius: BorderRadius.all(Radius.circular(8.0))),
+      width: 110.0,
+      height: 80.0,
+      child: Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.blue, fontSize: 24.0, height: 1.4),
+        ),
+      ),
+    );
   }
 }
