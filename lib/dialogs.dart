@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:Wallet/database.dart';
+import 'package:Wallet/models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -59,6 +61,7 @@ class NewRecordDialogState extends State<NewRecordDialog> {
                   RaisedButton(
                     onPressed: () {
                       log("msg: " + name);
+                      AppDatabase().insertRecord(Record(2, name, 4, 2.04, 24.01, 252.0));
                       Navigator.of(context, rootNavigator: true).pop();
                     },
                     child: Text('Create', style: TextStyle(fontSize: 20, color: Colors.white), ),
