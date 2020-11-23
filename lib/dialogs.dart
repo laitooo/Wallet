@@ -61,7 +61,12 @@ class NewRecordDialogState extends State<NewRecordDialog> {
                   RaisedButton(
                     onPressed: () {
                       log("msg: " + name);
-                      AppDatabase().insertRecord(Record(2, name, 4, 2.04, 24.01, 252.0));
+                      Record r = Record(2, name, 4, 2.04, 24.01, 252.0);
+                      List<dynamic> data = [];
+                      for(int i=0;i<1;i++){
+                        data.add(r.toMap());
+                      }
+                      AppDatabase.insertRecord(data);
                       Navigator.of(context, rootNavigator: true).pop();
                     },
                     child: Text('Create', style: TextStyle(fontSize: 20, color: Colors.white), ),

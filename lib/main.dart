@@ -2,8 +2,15 @@ import 'package:Wallet/database.dart';
 import 'package:flutter/material.dart';
 import 'package:Wallet/models.dart';
 import 'package:Wallet/dialogs.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:hive/hive.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  final appDocDir = await getApplicationDocumentsDirectory();
+  Hive.init(appDocDir.path);
+  AppDatabase.started = true;
+
   runApp(MyApp());
 }
 
@@ -22,15 +29,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyList extends StatelessWidget {
-  List<Record> records = List<Record>();
-
-  MyList() {
-    /*records.add(Record(0, "record1", 2, 20.0, 30.0, -10.0));
-    records.add(Record(1, "record2", 3, 0.0, 14.0, -14.0));
-    records.add(Record(2, "record3", 4, 40.0, 30.0, 10.0));
-    records.add(Record(3, "record4", 5, 200.0, 15.0, 185.0));*/
-    loadRecords();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +129,6 @@ class MyList extends StatelessWidget {
 }
 
 Future<List<Record>> loadRecords() async{
-  Future<List<Record>> list = AppDatabase().getAllProducts();
+  Future<List<Record>> list = AppDatabase.getAllProducts();
   return list;
 }

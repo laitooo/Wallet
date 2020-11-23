@@ -2,59 +2,32 @@ import 'dart:async';
 
 import 'package:Wallet/models.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:flutter/widgets.dart';
+//import 'package:sqflite/sqflite.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AppDatabase {
-  static Database sqliteDb;
   static String databaseName = "records.db";
   static String tableName = "records";
-  static final columns = [
-    "id",
-    "name",
-    "currency",
-    "credit",
-    "debit",
-    "balance"
-  ];
 
-  static Future init() async {
-    String databasesPath = await getDatabasesPath();
-    String userDBPath = join(databasesPath, '$databaseName');
-    sqliteDb = await openDatabase(
-      userDBPath,
-      version: 1,
-      onCreate: (Database db, int version) async {
-        db.execute('''CREATE TABLE IF NOT EXISTS records (
-          id INTEGER,
-          name TEXT,
-          currency INTEGER,
-          credit DOUBLE,
-          debit DOUBLE,
-          balance DOUBLE)''');
-      },
-    );
+  static bool started = false;
+
+  static insertRecord(List<dynamic> dataToInsert) async{
+    var box = await Hive.openBox(databaseName);
+    box.put(tableName, dataToInsert);
   }
 
-  checkDatabase() {
-    if (sqliteDb == null) {
-      init();
+  static Future<List<Record>> getAllProducts() async {
+    if(!started){
+      print("not started database");
     }
-  }
-
-  insertRecord(Record record) {
-    checkDatabase();
-    sqliteDb.insert(tableName, record.toMap());
-  }
-
-  Future<List<Record>> getAllProducts() async {
-    checkDatabase();
-    List<Map> results =
-        await sqliteDb.query(tableName, columns: columns, orderBy: "id ASC");
+    var box = await Hive.openBox(databaseName);
+    //print(box.get(tableName));
+    List<dynamic> results = box.get(tableName);
 
     List<Record> records = new List();
     results.forEach((result) {
-      Record record = Record.fromMap(result);
+      Record record = Record.fromDynamic(result);
       records.add(record);
     });
     return records;

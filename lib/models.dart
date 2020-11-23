@@ -14,6 +14,11 @@ class Record {
         data["debit"], data["balance"]);
   }
 
+  factory Record.fromDynamic(dynamic data){
+    return Record(data["id"], data["name"], data["currency"], data["credit"],
+        data["debit"], data["balance"]);
+  }
+
   Map<String, dynamic> toMap() =>{
     "id" : id,
     "name" : name,
