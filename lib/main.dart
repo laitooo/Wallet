@@ -1,11 +1,12 @@
 import 'package:Wallet/database.dart';
 import 'package:flutter/material.dart';
+import 'package:Wallet/record_screen.dart';
 import 'package:Wallet/models.dart';
 import 'package:Wallet/dialogs.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDocDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocDir.path);
@@ -23,13 +24,16 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyList(),
+      initialRoute: '/list',
+      routes: {
+        '/list' : (context) => MyList(),
+        '/record' : (context) => RecordDetail(),
+      },
     );
   }
 }
 
 class MyList extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,21 +66,26 @@ class MyList extends StatelessWidget {
     );
   }
 
-  Container _buildItemsForListView(BuildContext context, int index, Record record) {
+  Container _buildItemsForListView(
+      BuildContext context, int index, Record record) {
     return Container(
-        decoration: BoxDecoration(
-            color: Colors.blue,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 2.0,
-                spreadRadius: 0.0,
-                offset: Offset(2.0, 2.0), // shadow direction: bottom right
-              )
-            ],
-            borderRadius: BorderRadius.all(Radius.circular(8.0))),
-        margin: EdgeInsets.all(10.0),
-        padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 10.0),
+      decoration: BoxDecoration(
+          color: Colors.blue,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 2.0,
+              spreadRadius: 0.0,
+              offset: Offset(2.0, 2.0), // shadow direction: bottom right
+            )
+          ],
+          borderRadius: BorderRadius.all(Radius.circular(8.0))),
+      margin: EdgeInsets.all(10.0),
+      padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 10.0),
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, '/record');
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -99,7 +108,9 @@ class MyList extends StatelessWidget {
               ],
             )
           ],
-        ));
+        ),
+      ),
+    );
   }
 
   Widget textBox(String text) {
@@ -128,7 +139,7 @@ class MyList extends StatelessWidget {
   }
 }
 
-Future<List<Record>> loadRecords() async{
+Future<List<Record>> loadRecords() async {
   Future<List<Record>> list = AppDatabase.getAllProducts();
   return list;
 }

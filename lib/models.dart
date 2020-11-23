@@ -28,3 +28,32 @@ class Record {
     "balance" : balance,
   };
 }
+
+class Transaction {
+  int id;
+  String title;
+  String date;
+  double credit;
+  double debit;
+
+
+  Transaction(this.id, this.title, this.date, this.credit, this.debit);
+
+  factory Transaction.fromMap(Map<String, dynamic> data){
+    return Transaction(data["id"], data["title"], data["date"], data["credit"],
+        data["debit"]);
+  }
+
+  factory Transaction.fromDynamic(dynamic data){
+    return Transaction(data["id"], data["title"], data["date"], data["credit"],
+        data["debit"]);
+  }
+
+  Map<String, dynamic> toMap() =>{
+    "id" : id,
+    "title" : title,
+    "date" : date,
+    "credit" : credit,
+    "debit" : debit,
+  };
+}
