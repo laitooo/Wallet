@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "808766487632",
+    "firebase_url": "https://wallet-d9663.firebaseio.com",
+    "project_id": "wallet-d9663",
+    "storage_bucket": "wallet-d9663.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808766487632:android:040e9dcac028939e30e555",
+        "android_client_info": {
+          "package_name": "zxc.laitooo.Wallet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808766487632-h1c63g2p2n5bbl5da4o7n9b5mgs37usq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0mUTYw4CkTAIbI3A3MZ2N4emmpAJJmZc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808766487632-h1c63g2p2n5bbl5da4o7n9b5mgs37usq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
