@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'login.dart';
@@ -33,21 +34,29 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/splash',
       routes: {
-        '/splash' : (context) => SplashScreen(),
+        '/splash': (context) => SplashScreen(),
         '/list': (context) => MyList(),
         '/record': (context) => RecordDetail(),
         '/login': (context) => LoginScreen(),
-        '/register' : (context) => RegisterScreen(),
+        '/register': (context) => RegisterScreen(),
       },
     );
   }
 }
 
-class MyList extends StatelessWidget {
-  final auth = FirebaseAuth.instance;
+class MyList extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyList();
+}
 
-  MyList() {
-    getCurrentUser();
+class _MyList extends State<MyList> {
+  final auth = FirebaseAuth.instance;
+  final firestore = FirebaseFirestore.instance;
+  List<Record> records = [];
+
+  _MyList() {
+    //getCurrentUser();
+    loadRecords(auth.currentUser.email);
   }
 
   @override
@@ -57,24 +66,20 @@ class MyList extends StatelessWidget {
         title: Text("My Wallet"),
         actions: [
           IconButton(
-              icon: Icon(Icons.logout), color: Colors.white, onPressed: () {
+              icon: Icon(Icons.logout),
+              color: Colors.white,
+              onPressed: () {
                 auth.signOut();
                 Navigator.pushNamed(context, '/login');
-          })
+              })
         ],
       ),
-      body: FutureBuilder(
-        future: loadRecords(),
-        builder: (context, snapshot) {
-          List<Record> list = snapshot.data ?? [];
-          return ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: list.length,
-              itemBuilder: (BuildContext context, int index) {
-                return _buildItemsForListView(context, index, list[index]);
-              });
-        },
-      ),
+      body: ListView.builder(
+          padding: const EdgeInsets.all(8),
+          itemCount: records.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _buildItemsForListView(context, index, records[index]);
+          }),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           backgroundColor: Colors.blue,
@@ -171,9 +176,25 @@ class MyList extends StatelessWidget {
       print(e);
     }
   }
-}
 
-Future<List<Record>> loadRecords() async {
-  Future<List<Record>> list = AppDatabase.getAllProducts();
-  return list;
+  loadRecords(String email) {
+    try {
+      List<Record> list = List();
+      firestore.collection('records').get().then((snapshot) =>
+      {
+        for (var record in snapshot.docs)
+          {
+            if (record.data()['user'] == email)
+              {print(record.data()),
+                list.add(Record.fromMap(record.data())),
+                }
+          }
+      });
+      setState(() {
+        records.addAll(list);
+      });
+    }catch(e){
+      print(e);
+    }
+  }
 }

@@ -27,6 +27,16 @@ class Record {
     "debit" : debit,
     "balance" : balance,
   };
+
+  Map<String, dynamic> toMapWithUser(String user) =>{
+    "id" : id,
+    "name" : name,
+    "currency" : currency,
+    "credit" : credit,
+    "debit" : debit,
+    "balance" : balance,
+    "user" : user,
+  };
 }
 
 class Transaction {
