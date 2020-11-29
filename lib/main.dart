@@ -180,20 +180,20 @@ class _MyList extends State<MyList> {
   loadRecords(String email) {
     try {
       List<Record> list = List();
-      firestore.collection('records').get().then((snapshot) =>
-      {
-        for (var record in snapshot.docs)
-          {
-            if (record.data()['user'] == email)
-              {print(record.data()),
-                list.add(Record.fromMap(record.data())),
-                }
-          }
-      });
-      setState(() {
-        records.addAll(list);
-      });
-    }catch(e){
+      firestore.collection('records').get().then((snapshot) => {
+            for (var record in snapshot.docs)
+              {
+                if (record.data()['user'] == email)
+                  {
+                    print(record.data()),
+                    list.add(Record.fromMap(record.data())),
+                  }
+              },
+            setState(() {
+              records.addAll(list);
+            })
+          });
+    } catch (e) {
       print(e);
     }
   }
