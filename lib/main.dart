@@ -1,16 +1,23 @@
-import 'package:Wallet/database.dart';
 import 'package:flutter/material.dart';
-import 'package:Wallet/record_screen.dart';
-import 'package:Wallet/models.dart';
-import 'package:Wallet/dialogs.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'login.dart';
+import 'database.dart';
+import 'models.dart';
+import 'dialogs.dart';
+import 'record_screen.dart';
+import 'splash.dart';
+import 'register.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDocDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocDir.path);
   AppDatabase.started = true;
+  await Firebase.initializeApp();
 
   runApp(MyApp());
 }
@@ -24,21 +31,37 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: '/list',
+      initialRoute: '/splash',
       routes: {
-        '/list' : (context) => MyList(),
-        '/record' : (context) => RecordDetail(),
+        '/splash' : (context) => SplashScreen(),
+        '/list': (context) => MyList(),
+        '/record': (context) => RecordDetail(),
+        '/login': (context) => LoginScreen(),
+        '/register' : (context) => RegisterScreen(),
       },
     );
   }
 }
 
 class MyList extends StatelessWidget {
+  final auth = FirebaseAuth.instance;
+
+  MyList() {
+    getCurrentUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("My Wallet"),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.logout), color: Colors.white, onPressed: () {
+                auth.signOut();
+                Navigator.pushNamed(context, '/login');
+          })
+        ],
       ),
       body: FutureBuilder(
         future: loadRecords(),
@@ -136,6 +159,17 @@ class MyList extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void getCurrentUser() async {
+    try {
+      final user = await auth.currentUser;
+      if (user != null) {
+        print(user);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
